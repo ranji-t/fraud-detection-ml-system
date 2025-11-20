@@ -10,8 +10,9 @@ wheels/
 .venv
 
 # Files
-
+.env
 
 # Folder
 .vscode/
 data/
+runs/

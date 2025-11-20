@@ -1,5 +1,5 @@
 data:
- input: "D:\\Codebase\\fraud-detection\\data\\input\\creditcard.csv"
+ input_path: "D:\\Codebase\\fraud-detection\\data\\input\\creditcard.csv"
 
 read_csv:
   ignore_errors: false
@@ -13,7 +13,7 @@ split:
     train_size: 0.2
     random_state: 42
 
-training:
+train:
   epochs: 50
 
 lr_schedule:
@@ -24,5 +24,5 @@ lr_schedule:
     40: 1e-4
 
 class_weights:
-  pos_weight: 587.2  # float(99.83 / 0.17)
+  pos_weight: 587.235294117647  # float(99.83 / 0.17)
   neg_weight: 1.0
