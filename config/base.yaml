@@ -1,0 +1,28 @@
+data:
+ input: "D:\\Codebase\\fraud-detection\\data\\input\\creditcard.csv"
+
+read_csv:
+  ignore_errors: false
+  infer_schema_length: 1000000
+
+split:
+  test_split:
+    train_size: 0.1
+    random_state: 42
+  valid_split:
+    train_size: 0.2
+    random_state: 42
+
+training:
+  epochs: 50
+
+lr_schedule:
+  init_value: 0.1
+  boundaries_and_scales:
+    10: 1e-2
+    30: 1e-3
+    40: 1e-4
+
+class_weights:
+  pos_weight: 587.2  # float(99.83 / 0.17)
+  neg_weight: 1.0
