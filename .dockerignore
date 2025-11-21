@@ -37,8 +37,8 @@ README.md
 .env
 
 # Folders
+.pytest_cache/
 data/
+docs/
 notebook/
-docs/
 runs/
-docs/

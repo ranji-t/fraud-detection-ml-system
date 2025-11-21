@@ -13,7 +13,8 @@ wheels/
 .env
 
 # Folder
+.pytest_cache/
 .vscode/
 data/
-runs/
 docs/
+runs/
