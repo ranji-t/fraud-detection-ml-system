@@ -1,7 +1,3 @@
-# Standard Imports
-import pytest
-import os
-
 # import third party impots
 import pytest
 from pydantic import ValidationError

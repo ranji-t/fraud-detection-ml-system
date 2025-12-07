@@ -1,0 +1,23 @@
+# Seed for Initialization of parameter
+seed: 42
+# The Model Configuration
+model:
+    input_size: 29
+    hidden1_size: 16
+    bottleneck_size: 8
+    hidden2_size: 16
+    output_size: 29
+# The Training Configuration
+training:
+    epochs: 400
+    batch_size: 32
+    schedulers:
+        boundaries: [50,]
+        linear_schedule:
+            init_value: 1e-7
+            end_value: 1e-1
+            transition_steps: 50
+        cosine_decay_schedule:
+            init_value: 1e-1
+            decay_steps: 300
+            alpha: 1e-4
