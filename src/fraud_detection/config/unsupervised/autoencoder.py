@@ -1,5 +1,5 @@
 # Third party Imports
-from pydantic import BaseModel, PositiveInt, PositiveFloat
+from pydantic import BaseModel, PositiveInt, PositiveFloat, NonNegativeInt
 
 
 class ModelConfig(BaseModel):
@@ -10,25 +10,17 @@ class ModelConfig(BaseModel):
     output_size: PositiveInt
 
 
-class LinearScheduleConfig(BaseModel):
-    init_value: PositiveFloat
-    end_value: PositiveFloat
-    transition_steps: PositiveInt
-
-
-class CosineScheduleConfig(BaseModel):
-    init_value: PositiveFloat
-    decay_steps: PositiveInt
-    alpha: PositiveFloat
-
-
 class SchedulerConfig(BaseModel):
-    boundaries: list[PositiveInt]
-    linear_schedule: LinearScheduleConfig
-    cosine_decay_schedule: CosineScheduleConfig
+    init_value: PositiveFloat
+    peak_value: PositiveFloat
+    warmup_steps: NonNegativeInt
+    decay_steps: NonNegativeInt
+    end_value: PositiveFloat
+    exponent: PositiveFloat = 1.0
 
 
 class TrainingConfig(BaseModel):
+    shuffle_seed: PositiveInt = 101
     epochs: PositiveInt = 100
     batch_size: PositiveInt = 32
     schedulers: SchedulerConfig
