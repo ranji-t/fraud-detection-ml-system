@@ -81,6 +81,25 @@ This project demonstrates the following practical data-science skills — paste 
 
 Use this concise skill list in your README or GitHub profile to clearly advertise the practical, production-minded data-science competencies demonstrated by the notebooks.
 
+## Fraud Detection Approaches
+
+The `notebook/fraud-detection-AE-ANN.ipynb` notebook showcases advanced anomaly detection techniques to identify fraudulent transactions:
+
+### Approach A - Isolation Forest
+A baseline unsupervised approach using `scikit-learn`'s **Isolation Forest**. This tree-based ensemble method explicitly isolates anomalies by randomly selecting a feature and a split value. It is efficient for high-dimensional datasets and serves as a strong benchmark for fraud detection.
+
+### Approach B - Deep Autoencoder (JAX/Optax)
+A sophisticated unsupervised Neural Network implementation using **JAX** and **Optax**.
+
+*   **Architecture**: Symmetric Autoencoder designed to learn the compressed representation of normal transactions.
+    *   Structure: `Input (29) -> Hidden (16) -> Bottleneck (8) -> Hidden (16) -> Output (29)`
+*   **Technology**:
+    *   **JAX**: Leveraged for high-performance numerical computing and Just-In-Time (JIT) compilation (`@jax.jit`) to speed up model training and inference.
+    *   **Optax**: Used for the optimization loop, employing the **AdamW** optimizer with a Warmup Cosine Decay learning rate schedule for stable convergence.
+*   **Methodology**:
+    *   **Training**: The model is trained exclusively on **non-fraudulent (normal)** transactions to learn the manifold of "legitimate" behavior.
+    *   **Detection**: Anomalies (fraud) are detected by calculating the **Reconstruction Error** (Mean Absolute Error) between the input and the reconstructed output. High reconstruction errors indicate outliers that deviate from the learned normal patterns.
+
 ## Reproduce Experiments
 
 - Install dependencies from `requirements.txt`.
