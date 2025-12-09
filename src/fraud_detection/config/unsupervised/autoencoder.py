@@ -22,6 +22,7 @@ class SchedulerConfig(BaseModel):
 class TrainingConfig(BaseModel):
     shuffle_seed: PositiveInt = 101
     epochs: PositiveInt = 100
+    mini_batches: PositiveInt = 5
     batch_size: PositiveInt = 32
     schedulers: SchedulerConfig
 
