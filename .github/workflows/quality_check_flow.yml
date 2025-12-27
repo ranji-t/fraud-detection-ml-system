@@ -30,6 +30,8 @@ jobs:
           version: "0.5.18"
           enable-cache: true
           cache-dependency-glob: "uv.lock"
+      
+      - name: 📦 Install Dependencies (Locked)
         run: uv sync --locked --all-extras --dev --no-cache
       
       - name: Run Ruff Liter
