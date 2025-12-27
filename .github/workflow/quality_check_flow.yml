@@ -33,4 +33,7 @@ jobs:
         run: uv sync --locked --all-extras --dev --no-cache
       
       - name: Run Ruff Liter
-        run: uv run ruff check --no-cache --output-format=github
+        run: uv run ruff check --output-format=github
+      
+      - name: Run Ruff Format
+        run: uv run ruff format --check --output-format=github
