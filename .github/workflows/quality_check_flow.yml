@@ -31,8 +31,14 @@ jobs:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
       
+      - name: Cache Ruff
+        uses: actions/cache@v5
+        with:
+          path: ".ruff_cache"
+          key: ${{runner.os}}-ruff-${{hashFiles('uv.lock')}}
+      
       - name: 📦 Install Dependencies (Locked)
-        run: uv sync --locked --all-extras --dev --no-cache
+        run: uv sync --locked --all-extras --dev
       
       - name: Run Ruff Liter
         run: uv run ruff check --output-format=github
