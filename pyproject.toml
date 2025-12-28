@@ -33,3 +33,7 @@ dev = [
     "pytest>=9.0.1",
     "ruff>=0.14.2",
 ]
+
+[build-system]
+requires = ["uv_build>=0.5.18"]
+build-backend = "uv_build"
