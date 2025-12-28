@@ -1,0 +1,49 @@
+name: quality_check_flow
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+
+jobs:
+  qulaity_check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check out our code
+        uses: actions/checkout@v5
+      
+      - name: Setup python
+        uses: actions/setup-python@v6
+        with:
+          python-version-file: ".python-version"
+      
+      - name: Install UV
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.5.18"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      
+      # - name: Cache Ruff
+      #   uses: actions/cache@v5
+      #   with:
+      #     path: ".ruff_cache"
+      #     key: ${{runner.os}}-ruff-${{hashFiles('uv.lock')}}
+      
+      - name: 📦 Install Dependencies (Locked)
+        run: uv sync --locked --all-extras --dev
+      
+      - name: Run Ruff Liter
+        run: uv run ruff check --output-format=github notebook/ src/ test/
+      
+      - name: Run Ruff Format
+        run: uv run ruff format --check --output-format=github notebook/ src/ test/
+      
+      - name: Run Pytest
+        run: uv run pytest
