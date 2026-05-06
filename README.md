@@ -2,7 +2,7 @@
 
 > An end-to-end machine learning system for credit card fraud detection — from raw data and exploratory analysis through production-grade, containerised inference. Built to demonstrate the full data science lifecycle: rigorous EDA, classical and deep-learning models, custom metrics, hyperparameter optimisation, model explainability, and CI/CD-enforced code quality.
 
-[![CI](https://github.com/ranjeethrp15/fraud-detection-ml-system/actions/workflows/quality_check_flow.yml/badge.svg)](https://github.com/ranjeethrp15/fraud-detection-ml-system/actions/workflows/quality_check_flow.yml)
+[![CI](https://github.com/ranji-t/fraud-detection-ml-system/actions/workflows/quality_check_flow.yml/badge.svg)](https://github.com/ranji-t/fraud-detection-ml-system/actions/workflows/quality_check_flow.yml)
 ![Python](https://img.shields.io/badge/python-3.13-blue)
 ![uv](https://img.shields.io/badge/package%20manager-uv-green)
 ![Docker](https://img.shields.io/badge/docker-ready-blue)
