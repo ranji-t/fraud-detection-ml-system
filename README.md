@@ -1,145 +1,219 @@
-# fraud-detection-ml-system
+# Fraud Detection ML System
 
-An example end-to-end fraud detection machine learning project (data, notebooks, models, and a lightweight app). Designed to be demo-ready for GitHub and Docker-based showcase.
+> An end-to-end machine learning system for credit card fraud detection — from raw data and exploratory analysis through production-grade, containerised inference. Built to demonstrate the full data science lifecycle: rigorous EDA, classical and deep-learning models, custom metrics, hyperparameter optimisation, model explainability, and CI/CD-enforced code quality.
 
-## Highlights
+[![CI](https://github.com/ranjeethrp15/fraud-detection-ml-system/actions/workflows/quality_check_flow.yml/badge.svg)](https://github.com/ranjeethrp15/fraud-detection-ml-system/actions/workflows/quality_check_flow.yml)
+![Python](https://img.shields.io/badge/python-3.13-blue)
+![uv](https://img.shields.io/badge/package%20manager-uv-green)
+![Docker](https://img.shields.io/badge/docker-ready-blue)
+![Ruff](https://img.shields.io/badge/linter-ruff-orange)
 
-- **Notebooks**: multiple interactive notebooks for exploration and model experiments (`notebook/`).
-- **Data**: example dataset at `data/input/creditcard.csv` for reproducing experiments.
-- **Code**: lightweight app and modular code under `src/` for inference and utilities.
-- **Docker-ready**: `Dockerfile` and `compose.yaml` included for quick demos.
+---
 
-## Quickstart (local)
+## What's Inside
 
-1. Create a Python environment and install dependencies:
+Five notebooks and a modular Python package that walk through every stage of a real fraud detection problem — a heavily imbalanced, high-stakes binary classification task on the canonical [Kaggle Credit Card Fraud dataset](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud).
 
-```powershell
-python -m venv .venv; .\.venv\Scripts\Activate.ps1; pip install -r requirements.txt
+| Notebook | Focus |
+|---|---|
+| `fraud-detection.ipynb` | EDA, feature engineering, classical baselines (Decision Tree, Random Forest, Logistic Regression) |
+| `fd-lr-jax.ipynb` | Logistic Regression implemented **from scratch** in JAX with JIT-compiled training |
+| `fd-ann-jax.ipynb` | Artificial Neural Network built **from scratch** in JAX with manual backpropagation via `jax.value_and_grad` |
+| `fraud-detection-AE-ANN.ipynb` | Unsupervised anomaly detection: Isolation Forest baseline vs. a **Deep Autoencoder** (JAX + Optax) |
+| `fraud-detection-MOO.ipynb` | **Multi-Objective Optimisation** with Optuna — simultaneously optimising recall and precision |
+
+---
+
+## Data Science Skills Demonstrated
+
+### Modelling & ML Engineering
+- Implemented Logistic Regression and multi-layer ANNs **from scratch** in JAX — no Keras, no PyTorch; raw matrix ops, manual weight initialisation, and JIT-compiled forward passes
+- Built a symmetric Deep Autoencoder (`Input(29) → 16 → Bottleneck(8) → 16 → Output(29)`) for unsupervised fraud detection via reconstruction error
+- Trained XGBoost gradient-boosted trees alongside JAX neural nets for direct comparison
+- Used **Flax** for structured, higher-level neural network modules on top of JAX
+
+### Handling Class Imbalance
+- Applied class-weighted binary cross-entropy loss to handle extreme imbalance (~0.17% fraud rate)
+- Implemented stratified train/validation/test splits to preserve class ratios across all partitions
+- Performed threshold tuning using F1-optimal cutoff selection from precision–recall curves
+
+### Hyperparameter Optimisation
+- Used **Optuna** for automated hyperparameter search with trial pruning
+- Ran **Multi-Objective Optimisation (MOO)** — Pareto-front search simultaneously trading off precision vs. recall, reflecting real-world business constraints (cost of false positives vs. false negatives)
+- Analysed parameter importance to understand which hyperparameters drive model performance
+
+### Custom Evaluation Metrics
+Wrote production-style, fully validated custom metrics in `src/fraud_detection/clf/metrics/`:
+- **Precision@K** — fraction of true frauds in the top-K highest-risk predictions
+- **Recall@K** — fraction of all frauds captured in the top-K predictions
+- **Lift@K** — how much better the model performs than random selection at rank K
+
+These metrics reflect how fraud models are *actually evaluated* in operations — not just AUC.
+
+### Model Explainability
+- Used **SHAP** (SHapley Additive exPlanations) for model-agnostic feature importance
+- Produced summary plots and individual prediction explanations to make black-box models interpretable
+
+### Probability Calibration
+- Applied temperature scaling for post-hoc probability calibration
+- Computed Negative Log-Likelihood (NLL) from logits and generated calibration curves to verify probabilistic accuracy
+
+### Evaluation & Visualisation
+- Precision–Recall curves, ROC/AUC, Average Precision (AP), confusion matrices
+- Interactive Plotly figures (loss curves, PR/ROC curves, calibration plots)
+- Publication-quality Matplotlib static figures
+
+### Data Engineering
+- Fast data ingestion with **Polars** (lazy evaluation, columnar) and **Pandas** for compatibility
+- **PyArrow** for efficient columnar storage and interchange
+- **FastExcel** for high-performance Excel I/O
+- JAX-compatible feature scaling pipeline
+
+### Software Engineering & MLOps
+- **Type-safe configuration** — all model and training parameters defined as `Pydantic` `BaseModel` subclasses with field validators; YAML configs loaded via **OmegaConf**
+- **CI/CD pipeline** via GitHub Actions: runs `ruff check`, `ruff format`, and `pytest` on every push and PR to `main`/`dev`
+- **Locked, reproducible dependencies** via `uv` and `uv.lock`
+- **Docker** containerisation (`Dockerfile` + `compose.yaml`) for fully reproducible demos
+- **nbstripout** to keep notebook output out of version control — clean diffs
+- Python **3.13**, managed with `uv`
+
+---
+
+## Tech Stack
+
+| Category | Tools |
+|---|---|
+| Neural networks | JAX, Flax, Optax |
+| Classical ML | scikit-learn, XGBoost |
+| Hyperparameter search | Optuna (single- and multi-objective) |
+| Explainability | SHAP |
+| Data processing | Polars, Pandas, PyArrow, FastExcel |
+| Visualisation | Plotly, Matplotlib |
+| Configuration | Pydantic, OmegaConf |
+| Package management | uv |
+| Code quality | Ruff (lint + format), pytest |
+| CI/CD | GitHub Actions |
+| Containerisation | Docker, Docker Compose |
+
+---
+
+## Project Structure
+
+```
+fraud-detection/
+├── notebook/                      # Five end-to-end experiment notebooks
+│   ├── fraud-detection.ipynb      # EDA + classical baselines
+│   ├── fd-lr-jax.ipynb            # Logistic Regression from scratch (JAX)
+│   ├── fd-ann-jax.ipynb           # ANN from scratch (JAX)
+│   ├── fraud-detection-AE-ANN.ipynb  # Unsupervised: Isolation Forest + Autoencoder
+│   └── fraud-detection-MOO.ipynb  # Multi-objective hyperparameter optimisation
+├── src/
+│   └── fraud_detection/
+│       ├── clf/
+│       │   ├── metrics/           # Custom metrics: Precision@K, Recall@K, Lift@K
+│       │   └── utils/plotting/    # Reusable plotting utilities
+│       └── config/
+│           ├── config.py          # Pydantic-validated training config models
+│           ├── load_config.py     # OmegaConf YAML loader
+│           └── unsupervised/      # Autoencoder-specific config schema
+├── config/                        # YAML configuration files
+│   ├── base.yaml
+│   └── autoencoder/autoencoder.yaml
+├── data/
+│   ├── input/creditcard.csv       # Kaggle credit card fraud dataset
+│   └── db/optuna-fraud-detection.db  # Optuna study database
+├── test/                          # pytest test suite
+├── .github/workflows/             # GitHub Actions CI pipeline
+├── Dockerfile
+├── compose.yaml
+└── pyproject.toml                 # uv-managed dependencies
 ```
 
-2. Run the app (example):
+---
+
+## Fraud Detection Approaches
+
+### Supervised Learning (Notebooks 1–4)
+
+**Classical baselines** — Decision Tree, Random Forest, Logistic Regression evaluated with PR/ROC curves and threshold-optimised F1.
+
+**JAX from scratch** — Logistic Regression and ANN implemented with raw JAX ops. Training loops use `jax.value_and_grad` for gradient computation, `optax` for Adam/scheduled optimisers, and `@jax.jit` for compiled execution — no ML framework abstractions.
+
+**XGBoost** — Gradient-boosted trees with SHAP explainability.
+
+### Unsupervised Anomaly Detection (Notebook: `fraud-detection-AE-ANN.ipynb`)
+
+**Isolation Forest** — scikit-learn tree-based ensemble that isolates anomalies via random feature/split selection. Fast and parameter-light; used as an unsupervised baseline.
+
+**Deep Autoencoder (JAX + Optax)** — Trains exclusively on *legitimate* transactions to learn the manifold of normal behaviour. At inference, high reconstruction error (MAE between input and output) flags fraud. Key implementation details:
+- Warmup Cosine Decay learning-rate schedule via `optax`
+- AdamW optimiser with weight decay
+- JIT-compiled training step with `@jax.jit`
+- Mini-batch training with reproducible shuffling
+
+### Multi-Objective Optimisation (Notebook: `fraud-detection-MOO.ipynb`)
+
+Optuna Pareto-front search trades off **Recall** (catching frauds) vs **Precision** (minimising false alarms) — directly reflecting the business cost structure of fraud operations, where both missed fraud and customer friction from false positives have real monetary cost.
+
+---
+
+## Quickstart
+
+**Requirements:** Python 3.13, [uv](https://docs.astral.sh/uv/)
 
 ```powershell
-python src\app.py
+# Install dependencies
+uv sync --all-extras --dev
+
+# Launch notebooks
+uv run jupyter lab
 ```
 
-3. Open notebooks:
+Open any notebook in `notebook/` to reproduce experiments end-to-end.
+
+**Run the app:**
 
 ```powershell
-jupyter lab
+uv run python src\app.py
 ```
 
-Then open one of the notebooks in `notebook/` (for example `fraud-detection.ipynb`) to explore data and training steps.
+**Run tests and linting:**
 
-## Docker (demo)
+```powershell
+uv run pytest
+uv run ruff check src/ notebook/ test/
+uv run ruff format --check src/ notebook/ test/
+```
 
-Build the image and run the container:
+---
+
+## Docker
 
 ```powershell
 docker build -t fraud-detection .
 docker run --rm -p 8000:8000 fraud-detection
 ```
 
-Adjust the port mapping to your app's configuration if necessary.
-
-## Project Structure
-
-- `src/` — application entrypoint and package modules (`fraud_detection/`).
-- `notebook/` — exploratory analysis and model training notebooks.
-- `data/` — example datasets (`data/input/creditcard.csv`).
-- `models/` — trained model artifacts (if present) and model outputs.
-- `Dockerfile`, `compose.yaml` — container and compose definitions for demos.
-
-## Tech & Tools (used in notebooks)
-
-Below are the main libraries, frameworks, and techniques used across the notebooks in `notebook/` — include these on your GitHub README to highlight your data-science stack and skills.
-
-- **Data processing:** `pandas`, `polars`, `numpy`
-- **Modeling / ML frameworks:** `scikit-learn` (models, metrics, model selection), `jax` + `jax.numpy` for custom neural nets
-- **Optimization & training:** `optuna` (hyperparameter search, importance), `optax` (optimizers for JAX models)
-- **Algorithms showcased:** Decision Trees, Random Forests, neural networks (ANNs implemented with JAX)
-- **Evaluation & calibration:** `sklearn.metrics` (precision, recall, average-precision/AP-score, ROC/AUC), `sklearn.calibration` (calibration curves)
-- **Visualization:** `matplotlib`, `plotly` (interactive figures)
-- **Utilities:** `tqdm` (progress bars), `pathlib`, Python `typing` utilities
-- **Experiment & model analysis techniques:** EDA, feature importance analysis, hyperparameter tuning (including multi-objective tuning), calibration analysis, and train/test splitting and cross-validation
-
-Add these keywords to your README or repository description to clearly show the practical tools and techniques you used in the project.
-
-## Data Science Skills
-
-This project demonstrates the following practical data-science skills — paste these as a focused skills section on your GitHub profile or README to highlight your expertise:
-
-- **Modeling & ML engineering:** Implemented custom neural networks using `jax`/`jax.numpy` with JIT-compiled model functions and manual parameter initialization.
-- **Neural network training:** Built training loops with `optax` (Adam, learning-rate schedules), gradient calculation via `jax.value_and_grad`, and recording training history.
-- **Imbalanced data handling:** Applied class-weighted binary cross-entropy, stratified `train_test_split`, and threshold tuning to handle extreme class imbalance common in fraud detection.
-- **Calibration & uncertainty:** Implemented temperature-scaling for probability calibration, computed NLL from logits, and produced calibration curves to assess probabilistic accuracy.
-- **Evaluation & metrics:** Extensive use of precision–recall curves, ROC/AUC, average-precision (AP), confusion matrices, and F1-based threshold selection for business-focused evaluation.
-- **Feature engineering & data pipelines:** Fast ingestion with `polars` and `pandas`, feature scaling with a JAX-compatible scaler, and reproducible train/validation/test splits.
-- **Hyperparameter tuning & analysis:** Experimentation and hyperparameter search using `optuna`, plus parameter importance analysis and multi-objective tuning patterns.
-- **Visualization & storytelling:** Interactive and publication-ready plots with `plotly` (loss curves, PR/ROC, calibration) and supporting Matplotlib figures for static reports.
-- **Performance & reproducibility:** Use of `@jax.jit` for speed, typed code (`TypedDict`/`typing`), progress indicators (`tqdm.notebook`), and instructions for Docker-based reproducible demos.
-
-Use this concise skill list in your README or GitHub profile to clearly advertise the practical, production-minded data-science competencies demonstrated by the notebooks.
-
-## Fraud Detection Approaches
-
-The `notebook/fraud-detection-AE-ANN.ipynb` notebook showcases advanced anomaly detection techniques to identify fraudulent transactions:
-
-### Approach A - Isolation Forest
-A baseline unsupervised approach using `scikit-learn`'s **Isolation Forest**. This tree-based ensemble method explicitly isolates anomalies by randomly selecting a feature and a split value. It is efficient for high-dimensional datasets and serves as a strong benchmark for fraud detection.
-
-### Approach B - Deep Autoencoder (JAX/Optax)
-A sophisticated unsupervised Neural Network implementation using **JAX** and **Optax**.
-
-*   **Architecture**: Symmetric Autoencoder designed to learn the compressed representation of normal transactions.
-    *   Structure: `Input (29) -> Hidden (16) -> Bottleneck (8) -> Hidden (16) -> Output (29)`
-*   **Technology**:
-    *   **JAX**: Leveraged for high-performance numerical computing and Just-In-Time (JIT) compilation (`@jax.jit`) to speed up model training and inference.
-    *   **Optax**: Used for the optimization loop, employing the **AdamW** optimizer with a Warmup Cosine Decay learning rate schedule for stable convergence.
-*   **Methodology**:
-    *   **Training**: The model is trained exclusively on **non-fraudulent (normal)** transactions to learn the manifold of "legitimate" behavior.
-    *   **Detection**: Anomalies (fraud) are detected by calculating the **Reconstruction Error** (Mean Absolute Error) between the input and the reconstructed output. High reconstruction errors indicate outliers that deviate from the learned normal patterns.
-
-## Reproduce Experiments
-
-- Install dependencies from `requirements.txt`.
-- Open and run the notebooks in `notebook/` to follow the EDA, preprocessing, training, and evaluation steps.
-- The notebooks show end-to-end examples and are the primary entrypoint for reproducing results.
-
-## Show it off on GitHub
-
-- Add screenshots or an animated GIF of the notebook output or the app in action (place under `docs/` or `assets/`).
-- Add a short demo video or link in the README to highlight model performance and UX.
-- Add CI badges (GitHub Actions) and a license badge for a professional touch.
-
-Example commands to create a new GitHub repo and push:
+Or with Compose:
 
 ```powershell
-git init; git add .; git commit -m "Initial commit"; gh repo create <your-username>/fraud-detection-ml-system --public --source=. --remote=origin; git push -u origin main
+docker compose up
 ```
-
-Replace `<your-username>` with your GitHub handle. You can also add a `README` screenshot and GitHub Pages or a repo description to increase discoverability.
-
-## Development & Contributing
-
-- Use the notebooks for rapid prototyping. When an experiment becomes stable, extract training code into `src/fraud_detection/models/` for reuse.
-- Open issues and PRs for bugfixes, feature requests, and documentation improvements.
-
-## Data & License
-
-- Example dataset included for demo/educational purposes: `data/input/creditcard.csv`.
-- Add or update a `LICENSE` file to reflect how you want to share the project.
-
-## Next steps / Suggestions
-
-- Add a short `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md` for community contributions.
-- Add GitHub Actions workflow for linting and notebook testing to show CI status.
-- Include a few annotated screenshots and a short demo GIF in `docs/` to make the README visually appealing on GitHub.
 
 ---
 
-If you'd like, I can also:
+## CI/CD
 
-- add badges (build, license),
-- create a `docs/` folder and add a demo GIF, or
-- wire up a basic GitHub Actions workflow for CI. Which would you prefer next?
+Every push and pull request to `main` or `dev` triggers the GitHub Actions pipeline:
+
+1. **Ruff lint** — enforces code style and catches common errors
+2. **Ruff format check** — consistent formatting across `src/`, `notebook/`, `test/`
+3. **pytest** — runs the full test suite
+
+Dependencies are installed from `uv.lock` for a fully reproducible CI environment.
+
+---
+
+## Data
+
+[Kaggle Credit Card Fraud Detection dataset](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud) — 284,807 transactions, 492 frauds (0.172%). PCA-transformed features V1–V28, plus `Time`, `Amount`, and `Class`.
