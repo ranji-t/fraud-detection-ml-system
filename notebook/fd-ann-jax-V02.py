@@ -18,7 +18,7 @@ def _():
     from pprint import pprint
     from functools import partial
     from itertools import pairwise
-    from typing import TypedDict, Self, Sequence, NamedTuple, Callable, Any
+    from typing import Self, Sequence, NamedTuple, Callable, Any
 
     # Third Party imports
     import jax
@@ -27,21 +27,12 @@ def _():
     import pandas as pd
     import polars as pl
     import jax.numpy as jnp
-    from omegaconf import OmegaConf
-    from tqdm.notebook import tqdm
     import plotly.graph_objects as go
-    import matplotlib.pyplot as plt
     from sklearn.model_selection import train_test_split
-    from sklearn.calibration import calibration_curve
     from sklearn.metrics import (
-        roc_curve,
         roc_auc_score,
         precision_recall_curve,
         average_precision_score,
-        precision_score,
-        classification_report,
-        confusion_matrix,
-        ConfusionMatrixDisplay,
     )
     from tqdm import tqdm
 
@@ -566,7 +557,7 @@ def _(StandardScaler, X_test_jnp, X_train_jnp, X_valid_jnp, jnp, y_train_jnp):
     # Transform data
     X_train_ss = ss.fit_transform(X_train_jnp)
     X_valid_ss = ss.transform(X_valid_jnp)
-    X_test_ss = ss.transform(X_test_jnp)
+    X_test_ss = ss.transform(X_test_jnp)  # noqa: F841
 
     # positve weights
     pos_weight = (y_train_jnp.size - y_train_jnp.sum()) / y_train_jnp.sum()
@@ -622,6 +613,7 @@ def _(optax, weights):
         batch_size,
         dorpout_rate,
         dropout,
+        dropout_seed,
         epoches,
         opt_state,
         optimizer,
@@ -676,6 +668,7 @@ def _(
     X_train_ss,
     X_valid_ss,
     batch_size,
+    dropout_seed: int,
     epoches,
     forward_pass,
     jax,
@@ -697,7 +690,7 @@ def _(
         opt_state,
         train_batchstate,
         valid_batchstate,
-        dropout_key=jax.random.key(seed=353),
+        dropout_key=jax.random.key(seed=dropout_seed),
     )
 
     # History of Data Saves
