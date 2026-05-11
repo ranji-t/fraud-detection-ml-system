@@ -13,8 +13,10 @@ wheels/
 .env
 
 # Folder
-.pytest_cache/
 .vscode/
 data/
 docs/
 runs/
+.pytest_cache/
+.ruff_cache/
+__marimo__/

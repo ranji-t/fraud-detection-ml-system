@@ -3,17 +3,18 @@ name = "fraud-detection"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = [
+    "auto-mix-prep>=0.2.0",
     "fastexcel>=0.16.0",
     "flax>=0.12.1",
     "jax>=0.8.0",
     "matplotlib>=3.10.7",
-    "nbstripout>=0.8.1",
     "omegaconf>=2.3.0",
     "optax>=0.2.6",
     "optuna>=4.5.0",
     "pandas>=2.3.3",
+    "plotly>=6.3.1",
     "polars>=1.34.0",
     "pyarrow>=22.0.0",
     "pydantic>=2.12.4",
@@ -24,14 +25,13 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = [
+dev = ["pip>=25.3", "pytest>=9.0.1", "ruff>=0.14.2"]
+notebook = [
     "ipykernel>=7.1.0",
     "ipywidgets>=8.1.7",
+    "marimo>=0.23.5",
     "nbformat>=5.10.4",
-    "pip>=25.3",
-    "plotly>=6.3.1",
-    "pytest>=9.0.1",
-    "ruff>=0.14.2",
+    "nbstripout>=0.8.1",
 ]
 
 [build-system]
